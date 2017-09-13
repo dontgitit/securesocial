@@ -55,7 +55,7 @@ trait BaseLoginApi extends SecureSocial {
       provider <- env.providers.get(providerId) if provider.isInstanceOf[ApiSupport]
     ) yield {
       provider.asInstanceOf[ApiSupport].authenticateForApi.flatMap {
-        case authenticated: Authenticated =>
+        case authenticated: Authenticated[env.U] =>
           val profile = authenticated.profile
           env.userService.find(profile.providerId, profile.userId).flatMap {
             maybeExisting =>

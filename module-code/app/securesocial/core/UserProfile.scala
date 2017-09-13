@@ -37,24 +37,30 @@ trait GenericProfile extends UserProfile {
   def oAuth1Info: Option[OAuth1Info]
   def oAuth2Info: Option[OAuth2Info]
   def passwordInfo: Option[PasswordInfo]
+
+  def withAvatarUrl(avatarUrl: Option[String]): GenericProfile
+  def withPasswordInfo(passwordInfo: Option[PasswordInfo]): GenericProfile
 }
 
 /**
  * An implementation of the GenericProfile
  */
 case class BasicProfile(
-  providerId: String,
-  userId: String,
-  firstName: Option[String],
-  lastName: Option[String],
-  fullName: Option[String],
-  email: Option[String],
-  avatarUrl: Option[String],
-  authMethod: AuthenticationMethod,
-  oAuth1Info: Option[OAuth1Info] = None,
-  oAuth2Info: Option[OAuth2Info] = None,
-  passwordInfo: Option[PasswordInfo] = None
-) extends GenericProfile
+    providerId: String,
+    userId: String,
+    firstName: Option[String],
+    lastName: Option[String],
+    fullName: Option[String],
+    email: Option[String],
+    avatarUrl: Option[String],
+    authMethod: AuthenticationMethod,
+    oAuth1Info: Option[OAuth1Info] = None,
+    oAuth2Info: Option[OAuth2Info] = None,
+    passwordInfo: Option[PasswordInfo] = None
+) extends GenericProfile {
+  def withAvatarUrl(avatarUrl: Option[String]) = copy(avatarUrl = avatarUrl)
+  def withPasswordInfo(passwordInfo: Option[PasswordInfo]) = copy(passwordInfo = passwordInfo)
+}
 
 /**
  * The OAuth 1 details

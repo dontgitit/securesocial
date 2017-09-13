@@ -19,7 +19,6 @@ package securesocial.core.java;
 import play.libs.Scala;
 import scala.Option;
 import scala.concurrent.Future;
-import securesocial.core.BasicProfile;
 import securesocial.core.PasswordInfo;
 import securesocial.core.providers.MailToken;
 import securesocial.core.services.SaveMode;
@@ -43,7 +42,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
      * @return an optional user
      */
     @Override
-    public Future<Option<BasicProfile>> find(String providerId, String userId) {
+    public Future<Option<U>> find(String providerId, String userId) {
         return toScala(doFind(providerId, userId).thenApply(Scala::Option));
     }
 
@@ -58,7 +57,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
      * @return
      */
     @Override
-    public Future<Option<BasicProfile>> findByEmailAndProvider(String email, String providerId) {
+    public Future<Option<U>> findByEmailAndProvider(String email, String providerId) {
         return toScala(doFindByEmailAndProvider(email, providerId).thenApply(Scala::Option));
     }
 
@@ -69,7 +68,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
      * @param user
      */
     @Override
-    public Future<U> save(BasicProfile user, SaveMode mode) {
+    public Future<U> save(U user, SaveMode mode) {
         return toScala(doSave(user, mode));
     }
 
@@ -80,7 +79,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
      * @param to The Identity that needs to be linked to the current user
      */
     @Override
-    public Future<U> link(U current, BasicProfile to) {
+    public Future<U> link(U current, U to) {
         return toScala(doLink(current, to));
     }
 
@@ -90,7 +89,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
     }
 
     @Override
-    public Future<scala.Option<BasicProfile>> updatePasswordInfo(U user, PasswordInfo info) {
+    public Future<scala.Option<U>> updatePasswordInfo(U user, PasswordInfo info) {
         return toScala(doUpdatePasswordInfo(user, info).thenApply(Scala::Option));
 
     }
@@ -160,7 +159,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
      *
      * @param user
      */
-    public abstract CompletionStage<U> doSave(BasicProfile user, SaveMode mode);
+    public abstract CompletionStage<U> doSave(U user, SaveMode mode);
 
     /**
      * Saves a token
@@ -178,17 +177,17 @@ public abstract class BaseUserService<U> implements UserService<U> {
      * @param current The Identity of the current user
      * @param to The Identity that needs to be linked to the current user
      */
-    public abstract CompletionStage<U> doLink(U current, BasicProfile to);
+    public abstract CompletionStage<U> doLink(U current, U to);
 
     /**
      * Finds the user in the backing store.
      * @return an Identity instance or null if no user matches the specified id
      */
-    public abstract CompletionStage<BasicProfile> doFind(String providerId, String userId);
+    public abstract CompletionStage<U> doFind(String providerId, String userId);
 
-    public abstract CompletionStage<PasswordInfo>  doPasswordInfoFor(U user);
+    public abstract CompletionStage<PasswordInfo> doPasswordInfoFor(U user);
 
-    public abstract CompletionStage<BasicProfile> doUpdatePasswordInfo(U user, PasswordInfo info);
+    public abstract CompletionStage<U> doUpdatePasswordInfo(U user, PasswordInfo info);
 
     /**
      * Finds a token
@@ -212,7 +211,7 @@ public abstract class BaseUserService<U> implements UserService<U> {
      * @param providerId - the provider id
      * @return an Identity instance or null if no user matches the specified id
      */
-    public abstract CompletionStage<BasicProfile> doFindByEmailAndProvider(String email, String providerId);
+    public abstract CompletionStage<U> doFindByEmailAndProvider(String email, String providerId);
 
     /**
      * Deletes a token

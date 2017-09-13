@@ -16,7 +16,7 @@ import play.api.libs.concurrent.{ Execution => PlayExecution }
  */
 trait RuntimeEnvironment {
 
-  type U
+  type U <: GenericProfile
 
   def routes: RoutesService
 

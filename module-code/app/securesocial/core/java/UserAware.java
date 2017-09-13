@@ -21,6 +21,7 @@ import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import securesocial.core.GenericProfile;
 import securesocial.core.RuntimeEnvironment;
 import securesocial.core.authenticator.Authenticator;
 
@@ -61,7 +62,7 @@ public class UserAware extends Action<UserAwareAction> {
             return toJava(env.authenticatorService().fromRequest(ctx._requestHeader()))
                     .thenComposeAsync(authenticatorOption -> {
                         if (authenticatorOption.isDefined() && authenticatorOption.get().isValid()) {
-                            Authenticator<Object> authenticator = authenticatorOption.get();
+                            Authenticator<GenericProfile> authenticator = authenticatorOption.get();
                             return toJava(authenticator.touch())
                                     .thenComposeAsync(new InvokeDelegate(ctx, delegate), executor);
                         } else {

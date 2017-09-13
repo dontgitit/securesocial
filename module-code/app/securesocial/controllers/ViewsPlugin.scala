@@ -21,7 +21,7 @@ import play.api.data.Form
 import play.api.i18n.{ Lang, Messages, MessagesApi }
 import play.api.mvc.RequestHeader
 import play.twirl.api.{ Html, Txt }
-import securesocial.core.{ BasicProfile, RuntimeEnvironment }
+import securesocial.core.{ BasicProfile, GenericProfile, RuntimeEnvironment }
 import MessageImplicitHelper._
 /**
  * A trait that provides the pages for SecureSocial
@@ -89,7 +89,7 @@ trait MailTemplates {
    * @param request the current request
    * @return a tuple with the text and/or html body for the email
    */
-  def getAlreadyRegisteredEmail(user: BasicProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
+  def getAlreadyRegisteredEmail(user: GenericProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
 
   /**
    * Returns the welcome email sent when the user finished the sign up process
@@ -98,7 +98,7 @@ trait MailTemplates {
    * @param request the current request
    * @return a String with the text and/or html body for the email
    */
-  def getWelcomeEmail(user: BasicProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
+  def getWelcomeEmail(user: GenericProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
 
   /**
    * Returns the email sent when a user tries to reset the password but there is no account for
@@ -117,7 +117,7 @@ trait MailTemplates {
    * @param request the current http request
    * @return a String with the text and/or html body for the email
    */
-  def getSendPasswordResetEmail(user: BasicProfile, token: String)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
+  def getSendPasswordResetEmail(user: GenericProfile, token: String)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
 
   /**
    * Returns the email sent as a confirmation of a password change
@@ -126,7 +126,7 @@ trait MailTemplates {
    * @param request the current http request
    * @return a String with the text and/or html body for the email
    */
-  def getPasswordChangedNoticeEmail(user: BasicProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
+  def getPasswordChangedNoticeEmail(user: GenericProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html])
 
 }
 
@@ -182,11 +182,11 @@ object MailTemplates {
       (None, Some(securesocial.views.html.mails.signUpEmail(token)))
     }
 
-    def getAlreadyRegisteredEmail(user: BasicProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
+    def getAlreadyRegisteredEmail(user: GenericProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
       (None, Some(securesocial.views.html.mails.alreadyRegisteredEmail(user)))
     }
 
-    def getWelcomeEmail(user: BasicProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
+    def getWelcomeEmail(user: GenericProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
       (None, Some(securesocial.views.html.mails.welcomeEmail(user)))
     }
 
@@ -194,11 +194,11 @@ object MailTemplates {
       (None, Some(securesocial.views.html.mails.unknownEmailNotice()))
     }
 
-    def getSendPasswordResetEmail(user: BasicProfile, token: String)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
+    def getSendPasswordResetEmail(user: GenericProfile, token: String)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
       (None, Some(securesocial.views.html.mails.passwordResetEmail(user, token)))
     }
 
-    def getPasswordChangedNoticeEmail(user: BasicProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
+    def getPasswordChangedNoticeEmail(user: GenericProfile)(implicit request: RequestHeader, lang: Lang): (Option[Txt], Option[Html]) = {
       (None, Some(securesocial.views.html.mails.passwordChangedNotice(user)))
     }
   }

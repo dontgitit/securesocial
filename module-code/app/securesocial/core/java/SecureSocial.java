@@ -21,6 +21,7 @@ import play.libs.concurrent.HttpExecution;
 import play.mvc.Http;
 import scala.Option;
 import scala.concurrent.ExecutionContext;
+import securesocial.core.GenericProfile;
 import securesocial.core.RuntimeEnvironment;
 import securesocial.core.SecureSocial$;
 
@@ -74,7 +75,7 @@ public class SecureSocial {
         if (requestHeader == null || env == null) {
             return CompletableFuture.completedFuture(null);
         } else {
-            scala.concurrent.Future<Option<Object>> scalaFuture = SecureSocial$.MODULE$.currentUser(requestHeader, env, executor);
+            scala.concurrent.Future<Option<GenericProfile>> scalaFuture = SecureSocial$.MODULE$.currentUser(requestHeader, env, executor);
             return toJava(scalaFuture).thenApply(userOption -> userOption.isDefined() ? userOption.get() : null);
         }
     }

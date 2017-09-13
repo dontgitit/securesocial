@@ -191,7 +191,9 @@ trait BaseRegistration extends MailTokenBasedOperations {
                 import securesocial.core.utils._
                 val result = for (
                   toSave <- withAvatar;
-                  saved <- env.userService.save(toSave, SaveMode.SignUp);
+                  //                  saved <- env.userService.save(toSave, SaveMode.SignUp);
+                  // TODO!!!
+                  saved <- env.userService.save(???, SaveMode.SignUp);
                   deleted <- env.userService.deleteToken(t.uuid)
                 ) yield {
                   if (UsernamePasswordProvider.sendWelcomeEmail)

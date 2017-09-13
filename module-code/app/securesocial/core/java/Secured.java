@@ -22,6 +22,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import scala.Option;
 import scala.concurrent.ExecutionContextExecutor;
+import securesocial.core.GenericProfile;
 import securesocial.core.RuntimeEnvironment;
 import securesocial.core.authenticator.Authenticator;
 
@@ -83,7 +84,7 @@ public class Secured extends Action<SecuredAction> {
         }
     }
 
-    class CheckAuthenticator implements Function<Option<Authenticator<Object>>, CompletionStage<Result>> {
+    class CheckAuthenticator implements Function<Option<Authenticator<GenericProfile>>, CompletionStage<Result>> {
         private final Http.Context ctx;
 
         CheckAuthenticator(Http.Context ctx) {
@@ -91,11 +92,11 @@ public class Secured extends Action<SecuredAction> {
         }
 
         @Override
-        public CompletionStage<Result> apply(Option<Authenticator<Object>> authenticatorOption) {
+        public CompletionStage<Result> apply(Option<Authenticator<GenericProfile>> authenticatorOption) {
             ExecutionContextExecutor executor = HttpExecution.defaultContext();
 
             if (authenticatorOption.isDefined() && authenticatorOption.get().isValid()) {
-                final Authenticator<Object> authenticator = authenticatorOption.get();
+                final Authenticator<GenericProfile> authenticator = authenticatorOption.get();
                 Object user = authenticator.user();
                 if (authorizationInstance.isAuthorized(user, configuration.params())) {
                     return toJava(authenticator.touch())

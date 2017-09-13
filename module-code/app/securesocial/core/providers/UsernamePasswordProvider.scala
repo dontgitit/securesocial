@@ -32,7 +32,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 /**
  * A username password provider
  */
-class UsernamePasswordProvider[U](
+class UsernamePasswordProvider[U <: GenericProfile](
   userService: UserService[U],
   avatarService: Option[AvatarService],
   viewTemplates: ViewTemplates,
@@ -54,7 +54,7 @@ class UsernamePasswordProvider[U](
     doAuthentication()
   }
 
-  private def profileForCredentials(userId: String, password: String): Future[Option[BasicProfile]] = {
+  private def profileForCredentials(userId: String, password: String): Future[Option[U]] = {
     userService.find(id, userId).map { maybeUser =>
       for (
         user <- maybeUser;
@@ -73,10 +73,10 @@ class UsernamePasswordProvider[U](
       NavigationFlow(badRequest(UsernamePasswordProvider.loginForm, Some(InvalidCredentials)))
   }
 
-  protected def withUpdatedAvatar(profile: BasicProfile): Future[BasicProfile] = {
+  protected def withUpdatedAvatar(profile: U): Future[U] = {
     (avatarService, profile.email) match {
       case (Some(service), Some(e)) => service.urlFor(e).map {
-        case url if url != profile.avatarUrl => profile.copy(avatarUrl = url)
+        case url if url != profile.avatarUrl => profile.withAvatarUrl(url).asInstanceOf[U]
         case _ => profile
       }
       case _ => Future.successful(profile)
@@ -97,7 +97,7 @@ class UsernamePasswordProvider[U](
         val password = credentials._2
 
         profileForCredentials(userId, password).flatMap {
-          case Some(profile) => withUpdatedAvatar(profile).map(Authenticated)
+          case Some(profile) => withUpdatedAvatar(profile).map(Authenticated[U])
           case None => authenticationFailedResult(apiMode)
         }
       }

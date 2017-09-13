@@ -107,7 +107,7 @@ trait BaseProviderController extends SecureSocial with I18nSupport {
             flow.result.addToSession(SecureSocial.OriginalUrlKey -> url)
           } getOrElse flow.result
         }
-        case authenticated: AuthenticationResult.Authenticated =>
+        case authenticated: AuthenticationResult.Authenticated[env.U] =>
           if (authenticationFlow) {
             val profile = authenticated.profile
             env.userService.find(profile.providerId, profile.userId).flatMap { maybeExisting =>
