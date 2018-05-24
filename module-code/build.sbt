@@ -21,7 +21,7 @@ resolvers ++= Seq(
   Resolver.typesafeRepo("releases")
 )
 
-organization := "ws.securesocial"
+organization := "com.iterable"
 
 organizationName := "SecureSocial"
 
