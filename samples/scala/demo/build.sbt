@@ -8,7 +8,7 @@ scalaVersion := Common.scalaVersion
 
 libraryDependencies ++= Seq(
   specs2 % "test",
-  "ws.securesocial" %% "securesocial" % version.value,
+  "com.iterable" %% "securesocial" % version.value,
   guice
 )
 
