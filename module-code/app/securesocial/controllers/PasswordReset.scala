@@ -46,7 +46,6 @@ class PasswordReset @Inject() (
  *
  */
 trait BasePasswordReset extends MailTokenBasedOperations with BaseController {
-
   private val logger = play.api.Logger("securesocial.controllers.BasePasswordReset")
 
   val PasswordUpdated = "securesocial.password.passwordUpdated"
