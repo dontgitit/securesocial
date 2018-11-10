@@ -49,7 +49,6 @@ class Registration @Inject() (
 trait BaseRegistration extends MailTokenBasedOperations with BaseController {
 
   import securesocial.controllers.BaseRegistration._
-  import securesocial.controllers.MailTokenBasedOperations._
 
   private val logger = play.api.Logger("securesocial.controllers.Registration")
 

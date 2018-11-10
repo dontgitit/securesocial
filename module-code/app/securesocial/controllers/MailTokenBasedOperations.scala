@@ -37,14 +37,26 @@ object MailTokenBasedOperations {
    *
    * @param email the email address
    * @param isSignUp a boolean indicating if the token is used for a signup or password reset operation
+   * @param tokenDurationMinutes duration, in minutes, indicating how long the token should remain valid
    * @return a MailToken instance
    */
-  def createToken(email: String, isSignUp: Boolean)(implicit env: RuntimeEnvironment): Future[MailToken] = {
+  def createToken(email: String, isSignUp: Boolean, tokenDurationMinutes: Int): MailToken = {
     val now = DateTime.now
-    val TokenDuration = env.configuration.get[Int](TokenDurationKey)
+    MailToken(
+      UUID.randomUUID().toString, email.toLowerCase, now, now.plusMinutes(tokenDurationMinutes), isSignUp = isSignUp)
+  }
 
-    Future.successful(MailToken(
-      UUID.randomUUID().toString, email.toLowerCase, now, now.plusMinutes(TokenDuration), isSignUp = isSignUp))
+  /**
+   * Creates a token for mail based operations
+   * Its duration will be derived from a configuration setting in the current environment
+   *
+   * @param email the email address
+   * @param isSignUp a boolean indicating if the token is used for a signup or password reset operation
+   * @return a MailToken instance
+   */
+  def createToken(email: String, isSignUp: Boolean)(implicit env: RuntimeEnvironment): MailToken = {
+    val TokenDuration = env.configuration.get[Int](TokenDurationKey)
+    createToken(email, isSignUp, TokenDuration)
   }
 }
 
@@ -59,6 +71,17 @@ abstract class MailTokenBasedOperations extends SecureSocial {
 
   val startForm = Form(
     Email -> email.verifying(nonEmpty))
+
+  /**
+   * Creates a token for mail based operations
+   *
+   * @param email the email address
+   * @param isSignUp a boolean indicating if the token is used for a signup or password reset operation
+   * @return a MailToken instance
+   */
+  def createToken(email: String, isSignUp: Boolean): Future[MailToken] = {
+    Future.successful(MailTokenBasedOperations.createToken(email, isSignUp))
+  }
 
   /**
    * Helper method to execute actions where a token needs to be retrieved from
