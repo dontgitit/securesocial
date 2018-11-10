@@ -6,7 +6,7 @@ version := Common.version
 
 scalaVersion := Common.scalaVersion
 
-libraryDependencies ++= Seq("com.iterable" %% "securesocial" % version.value, javaCore, guice)
+libraryDependencies ++= Seq(Common.organization %% "securesocial" % version.value, javaCore, guice)
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
