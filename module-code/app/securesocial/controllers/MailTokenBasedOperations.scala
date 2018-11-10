@@ -19,16 +19,46 @@ package securesocial.controllers
 import java.util.UUID
 
 import org.joda.time.DateTime
-import play.api.Configuration
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.i18n.Messages
 import play.api.mvc.{ RequestHeader, Result }
-import securesocial.core.SecureSocial
+import securesocial.core.{ RuntimeEnvironment, SecureSocial }
 import securesocial.core.providers.MailToken
 
 import scala.concurrent.Future
+
+object MailTokenBasedOperations {
+  val TokenDurationKey = "securesocial.userpass.tokenDuration"
+
+  /**
+   * Creates a token for mail based operations
+   *
+   * @param email the email address
+   * @param isSignUp a boolean indicating if the token is used for a signup or password reset operation
+   * @param tokenDurationMinutes duration, in minutes, indicating how long the token should remain valid
+   * @return a MailToken instance
+   */
+  def createToken(email: String, isSignUp: Boolean, tokenDurationMinutes: Int): MailToken = {
+    val now = DateTime.now
+    MailToken(
+      UUID.randomUUID().toString, email.toLowerCase, now, now.plusMinutes(tokenDurationMinutes), isSignUp = isSignUp)
+  }
+
+  /**
+   * Creates a token for mail based operations
+   * Its duration will be derived from a configuration setting in the current environment
+   *
+   * @param email the email address
+   * @param isSignUp a boolean indicating if the token is used for a signup or password reset operation
+   * @return a MailToken instance
+   */
+  def createToken(email: String, isSignUp: Boolean)(implicit env: RuntimeEnvironment): MailToken = {
+    val TokenDuration = env.configuration.get[Int](TokenDurationKey)
+    createToken(email, isSignUp, TokenDuration)
+  }
+}
 
 /**
  * The base controller for password reset and password change operations
@@ -38,9 +68,6 @@ abstract class MailTokenBasedOperations extends SecureSocial {
   val Success = "success"
   val Error = "error"
   val Email = "email"
-  val TokenDurationKey = "securesocial.userpass.tokenDuration"
-  val configuration: Configuration = env.configuration
-  val TokenDuration = configuration.get[Int](TokenDurationKey)
 
   val startForm = Form(
     Email -> email.verifying(nonEmpty))
@@ -53,10 +80,7 @@ abstract class MailTokenBasedOperations extends SecureSocial {
    * @return a MailToken instance
    */
   def createToken(email: String, isSignUp: Boolean): Future[MailToken] = {
-    val now = DateTime.now
-
-    Future.successful(MailToken(
-      UUID.randomUUID().toString, email.toLowerCase, now, now.plusMinutes(TokenDuration), isSignUp = isSignUp))
+    Future.successful(MailTokenBasedOperations.createToken(email, isSignUp))
   }
 
   /**
