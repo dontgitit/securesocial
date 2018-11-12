@@ -10,7 +10,7 @@ crossScalaVersions := Common.crossScalaVersions
 
 libraryDependencies ++= Seq(
   specs2 % "test",
-  "ws.securesocial" %% "securesocial" % version.value,
+  Common.organization %% "securesocial" % version.value,
   guice,
   ehcache
 )
