@@ -6,10 +6,13 @@ version := Common.version
 
 scalaVersion := Common.scalaVersion
 
+crossScalaVersions := Common.crossScalaVersions
+
 libraryDependencies ++= Seq(
   specs2 % "test",
   Common.organization %% "securesocial" % version.value,
-  guice
+  guice,
+  ehcache
 )
 
 resolvers += Resolver.sonatypeRepo("snapshots")
