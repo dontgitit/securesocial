@@ -20,17 +20,17 @@ import play.libs.concurrent.HttpExecution;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.libs.concurrent.HttpExecutionContext;
 import scala.Option;
-import scala.concurrent.ExecutionContextExecutor;
 import securesocial.core.RuntimeEnvironment;
 import securesocial.core.authenticator.Authenticator;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import static play.libs.concurrent.HttpExecution.defaultContext;
 import static scala.compat.java8.FutureConverters.toJava;
 
 /**
@@ -47,13 +47,15 @@ import static scala.compat.java8.FutureConverters.toJava;
 public class Secured extends Action<SecuredAction> {
 
     private RuntimeEnvironment env;
+    private HttpExecutionContext hec;
     private Authorization authorizationInstance;
     private SecuredActionResponses responses;
     private static final String ENVIRONMENT_KEY = "securesocial-env";
 
     @Inject
-    public Secured(RuntimeEnvironment env) throws Throwable {
+    public Secured(RuntimeEnvironment env, HttpExecutionContext hec) throws Throwable {
         this.env = env;
+        this.hec = hec;
     }
 
     static void initEnv(RuntimeEnvironment env) throws IllegalAccessException, InstantiationException {
@@ -74,7 +76,7 @@ public class Secured extends Action<SecuredAction> {
             authorizationInstance = configuration.authorization().newInstance();
             responses = configuration.responses().newInstance();
             return toJava(env.authenticatorService().fromRequest(ctx._requestHeader()))
-                    .thenComposeAsync(new CheckAuthenticator(ctx), HttpExecution.defaultContext())
+                    .thenComposeAsync(new CheckAuthenticator(ctx), hec.current())
                     .whenComplete((result, ex) -> Secured.clearEnv());
         } catch (Throwable t) {
             CompletableFuture<Result> failedResult = new CompletableFuture<>();
@@ -92,14 +94,14 @@ public class Secured extends Action<SecuredAction> {
 
         @Override
         public CompletionStage<Result> apply(Option<Authenticator<Object>> authenticatorOption) {
-            ExecutionContextExecutor executor = HttpExecution.defaultContext();
+            Executor executor = hec.current();
 
             if (authenticatorOption.isDefined() && authenticatorOption.get().isValid()) {
                 final Authenticator<Object> authenticator = authenticatorOption.get();
                 Object user = authenticator.user();
                 if (authorizationInstance.isAuthorized(user, configuration.params())) {
                     return toJava(authenticator.touch())
-                            .thenComposeAsync(new InvokeDelegate(ctx, delegate), executor);
+                            .thenComposeAsync(new InvokeDelegate(ctx, delegate, hec), executor);
                 } else {
                     return responses.notAuthorizedResult(ctx);
                 }

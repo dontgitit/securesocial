@@ -16,7 +16,7 @@
  */
 package securesocial.core.java;
 
-import play.libs.concurrent.HttpExecution;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -31,16 +31,18 @@ import static scala.compat.java8.FutureConverters.toJava;
 class InvokeDelegate implements Function<Authenticator<Object>, CompletionStage<Result>> {
     private final Http.Context ctx;
     private final Action<?> delegate;
+    private final HttpExecutionContext hec;
 
-    InvokeDelegate(Http.Context ctx, Action<?> delegate) {
+    InvokeDelegate(Http.Context ctx, Action<?> delegate, HttpExecutionContext hec) {
         this.ctx = ctx;
         this.delegate = delegate;
+        this.hec = hec;
     }
 
     @Override
     public CompletionStage<Result> apply(Authenticator<Object> authenticator) {
         ctx.args.put(SecureSocial.USER_KEY, authenticator.user());
         return toJava(authenticator.touching(ctx))
-                .thenComposeAsync(boxedUnit -> delegate.call(ctx), HttpExecution.defaultContext());
+                .thenComposeAsync(boxedUnit -> delegate.call(ctx), hec.current());
     }
 }
