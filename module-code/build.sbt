@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   cacheApi,
   "com.typesafe.play" %% "play-mailer-guice" % "6.0.1", // this could be play-mailer but wouldn't have the guice module
   "io.methvin.play" %% "autoconfig-macros" % "0.2.0" % "provided",
-  "org.mindrot" % "jbcrypt" % "0.3m"
+  "org.mindrot" % "jbcrypt" % "0.3m",
+  "org.apache.commons" % "commons-lang3" % "3.9"
 )
 
 resolvers ++= Seq(
