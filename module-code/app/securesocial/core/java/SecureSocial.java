@@ -56,7 +56,7 @@ public class SecureSocial {
      * @return the current user object or null if there isn't one available
      */
     public static CompletionStage<Object> currentUser(RuntimeEnvironment env) {
-        return currentUser(env, scala.concurrent.ExecutionContext.global());
+        return currentUser(env, scala.concurrent.ExecutionContext$.MODULE$.global());
     }
 
     /**
