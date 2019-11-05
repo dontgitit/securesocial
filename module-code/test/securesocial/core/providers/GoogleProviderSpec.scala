@@ -128,8 +128,7 @@ class GoogleProviderSpec extends PlaySpecification with Mockito {
         Some(email),
         Some(avatarUrl),
         AuthenticationMethod.OAuth2,
-        oAuth2Info = Some(oAuth2Info)
-      )
+        oAuth2Info = Some(oAuth2Info))
       profile must_== expectedProfile
     }
   }

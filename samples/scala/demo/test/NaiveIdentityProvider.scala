@@ -16,7 +16,6 @@ class NaiveIdentityProvider extends IdentityProvider {
       Some("Foo Bar"),
       Some("foo.bar@example.com"),
       None,
-      authMethod
-    )))
+      authMethod)))
   }
 }
