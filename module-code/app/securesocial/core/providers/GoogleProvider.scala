@@ -93,11 +93,11 @@ object GooglePeopleApi {
  * A Google OAuth2 Provider
  */
 class GoogleProvider(
-  routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client
-)
-    extends OAuth2Provider(routesService, client, cacheService) {
+    routesService: RoutesService,
+    cacheService: CacheService,
+    client: OAuth2Client
+) extends OAuth2Provider(routesService, client, cacheService) {
+
   import GooglePeopleApi.PersonFields._
   import GooglePeopleApi._
 
@@ -107,7 +107,10 @@ class GoogleProvider(
 
   protected final def primary[T <: HasFieldMetadata](values: Seq[T]): Option[T] = values.find(_.metadata.primary)
 
-  protected def fillSuccessfulProfile(me: Person, info: securesocial.core.OAuth2Info): BasicProfile = {
+  protected def fillSuccessfulProfile(me: Person, info: OAuth2Info): BasicProfile = {
+    if (me.metadata.sources.length != 1) {
+      logger.warn(s"[securesocial] person has multiple metadata sources: $me")
+    }
     val userId = me.metadata.sources.head.id
     val name = primary(me.names)
     val firstName = name.flatMap(_.givenName)

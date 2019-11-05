@@ -1,8 +1,9 @@
 package scenarios.helpers
 
-import com.google.inject.Singleton
+import play.api.Configuration
+import play.api.i18n.MessagesApi
 import securesocial.core.services.UserService
-import securesocial.core.{ BasicProfile, RuntimeEnvironment }
+import securesocial.core.RuntimeEnvironment
 
 /**
  * Created by dverdone on 8/6/15.
@@ -10,6 +11,7 @@ import securesocial.core.{ BasicProfile, RuntimeEnvironment }
 
 case class TestGlobal() extends RuntimeEnvironment.Default {
   type U = DemoUser
-  lazy override val userService: UserService[DemoUser] = null
-
+  override lazy val userService: UserService[DemoUser] = null
+  override lazy val configuration: Configuration = ???
+  override lazy val messagesApi: MessagesApi = ???
 }
