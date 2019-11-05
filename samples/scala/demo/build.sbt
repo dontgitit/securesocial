@@ -6,16 +6,16 @@ version := Common.version
 
 scalaVersion := Common.scalaVersion
 
-scalariformSettings
+crossScalaVersions := Common.crossScalaVersions
 
 libraryDependencies ++= Seq(
   specs2 % "test",
-  "ws.securesocial" %% "securesocial" % version.value
+  Common.organization %% "securesocial" % version.value,
+  guice,
+  ehcache
 )
 
 resolvers += Resolver.sonatypeRepo("snapshots")
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-
 
 scalacOptions := Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature")
 

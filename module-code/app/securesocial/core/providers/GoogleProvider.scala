@@ -54,8 +54,7 @@ object GooglePeopleApi {
     metadata: FieldMetadata,
     displayName: Option[String],
     familyName: Option[String],
-    givenName: Option[String]
-  ) extends HasFieldMetadata
+    givenName: Option[String]) extends HasFieldMetadata
   object Name {
     implicit val fmt: OFormat[Name] = Json.format[Name]
   }
@@ -93,10 +92,9 @@ object GooglePeopleApi {
  * A Google OAuth2 Provider
  */
 class GoogleProvider(
-    routesService: RoutesService,
-    cacheService: CacheService,
-    client: OAuth2Client
-) extends OAuth2Provider(routesService, client, cacheService) {
+  routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client) extends OAuth2Provider(routesService, client, cacheService) {
 
   import GooglePeopleApi.PersonFields._
   import GooglePeopleApi._
